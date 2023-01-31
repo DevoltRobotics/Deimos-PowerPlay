@@ -130,6 +130,7 @@ public class autonomo extends LinearOpMode {
                 })
                 .setReversed(true);
 
+        // pepe estuvo aqui
 
         if(position == 2){
             sequenceee.lineToConstantHeading(new Vector2d(-35,6.8));
