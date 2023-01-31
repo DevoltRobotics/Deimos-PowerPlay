@@ -132,6 +132,7 @@ public class autonomo extends LinearOpMode {
 
         // pepe estuvo aqui
         // aqui tambien
+        // aqui no
 
         if(position == 2){
             sequenceee.lineToConstantHeading(new Vector2d(-35,6.8));
