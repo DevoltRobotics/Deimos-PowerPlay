@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.control.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 
-
+@Config
 public class Robot {
 
    public  DcMotorEx hombro;
@@ -20,6 +23,10 @@ public class Robot {
    public DcMotor elev2;
    public Servo garra1;
    public Servo garra2;
+
+   public static PIDCoefficients rielesPID = new PIDCoefficients(0.0011, 0, 0);
+
+   public PIDFController rielesController = new PIDFController(rielesPID);
 
    public SampleMecanumDrive drive;
    public OpenCvCamera camara;
@@ -87,17 +94,24 @@ public class Robot {
          garra2.setPosition(position);
     }
 
-    public void elevadorAuto(double power, int ticks) {
-
+    public void elevadores(double power, int ticks){
        elev.setTargetPosition(ticks);
        elev.setMode(DcMotor.RunMode.RUN_TO_POSITION);
        elev.setPower(power);
 
-
-        elev2.setTargetPosition(-ticks);
+        elev2.setTargetPosition(ticks);
         elev2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elev2.setPower(power);
+    }
 
+    public void elevadorAuto(double power, int ticks) {
+       rielesController.setTargetPosition(ticks);
+       rielesController.setOutputBounds(-1, 1);
+
+       double rielesPower = rielesController.update(elev.getCurrentPosition()) * power;
+
+       elev.setPower(rielesPower);
+       elev2.setPower(rielesPower);
     }
 
     public void hombrito(double power){

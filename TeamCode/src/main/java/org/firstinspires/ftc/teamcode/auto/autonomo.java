@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.OpenCV.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
-import org.opencv.core.Mat;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -24,15 +25,10 @@ import java.util.ArrayList;
 @Autonomous(name = "ezquinas azules")
 public class autonomo extends LinearOpMode {
 
-
-
-    static final double FEET_PER_METER = 3.28084;
-
     double fx = 578.272;
     double fy = 578.272;
     double cx = 402.145;
     double cy = 221.506;
-
 
     double tagsize = 0.166;
 
@@ -61,7 +57,7 @@ public class autonomo extends LinearOpMode {
             }
         });
 
-        int position = 0;
+        int position = 2;
 
         while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> detections = pipeline.getLatestDetections();
@@ -69,7 +65,7 @@ public class autonomo extends LinearOpMode {
             if (detections.size() >= 1) {
                 position = detections.get(0).id;
                 telemetry.addData("id detectada", position);
-
+                telemetry.update();
             }
         }
 
@@ -77,7 +73,7 @@ public class autonomo extends LinearOpMode {
         Robot robot = new Robot();
         robot.init(hardwareMap);
         robot.garra2(0);
-        robot.garra1(1);
+        robot.garra1(0.6);
 
 
 
@@ -95,40 +91,128 @@ public class autonomo extends LinearOpMode {
 
 
         TrajectorySequenceBuilder sequenceee = robot.drive.trajectorySequenceBuilder(posicionInicial)
-                .UNSTABLE_addTemporalMarkerOffset(0, ()->{
+                .UNSTABLE_addTemporalMarkerOffset(0.8, ()->{
                     robot.garra2(0);
-                    robot.garra1(1);
+                    robot.garra1(0.6);
                 })
 
 
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () ->{
-                    robot.brazoauto(1,550);
-                    robot.elevadorAuto(1,-3500);
-                    robot.hombritoAuto(1,-300);
+                    robot.brazoauto(1,700);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(2.5, ()->{
+                .UNSTABLE_addTemporalMarkerOffset(0.5,()->{
+                    robot.hombritoAuto(1,400);
+                    robot.elevadores(1,1500);
+
+                })
+                /*.UNSTABLE_addTemporalMarkerOffset(2.5, ()->{
                     robot.elevadorAuto(1, -2500);
+                })*/
+               /* .UNSTABLE_addTemporalMarkerOffset(1.5, ()->{
+                    robot.brazoauto(1,970);
+                })*/
+
+                .UNSTABLE_addTemporalMarkerOffset(2, () ->{
+                    robot.garra1(0.2);
+                    robot.garra2(0.4);
                 })
-                .UNSTABLE_addTemporalMarkerOffset(3, () ->{
-                    robot.garra1(0);
-                    robot.garra2(1);
-                })
-                .lineTo(new Vector2d(-36.4, -3.95))
+                .lineTo(new Vector2d(-36, -4))
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(1, () ->{
-                    robot.elevadorAuto(1,0);
+                    robot.elevadores(1,0);
                     System.out.println("que ooonda santiago");
                 })
-                .UNSTABLE_addTemporalMarkerOffset(2, () ->{
-                    robot.brazoauto(1,220);
+                .UNSTABLE_addTemporalMarkerOffset(1, () ->{
+                    robot.brazoauto(1,0);
                     System.out.println("que ooonda abby");
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0,() ->{
                     robot.hombritoAuto(0.5,0);
                     System.out.println("que ooonda saray");
                 })
-                .setReversed(true);
+                .setReversed(true)
+
+                .lineToConstantHeading(new Vector2d(-35,9))
+                .splineToLinearHeading(new Pose2d(-36,9,Math.toRadians(180)), 0)
+                .UNSTABLE_addTemporalMarkerOffset(0,()->{
+                    robot.elevadores(1,730);
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(1,() ->{
+                    robot.garra1(0.6);
+                    robot.garra2(0);
+                })
+
+                .lineToConstantHeading(new Vector2d(-61,11))
+
+
+                // .splineToLinearHeading(new Pose2d(-40,11, Math.toRadians(180)), Math.toRadians(0))
+
+
+
+
+
+                .UNSTABLE_addTemporalMarkerOffset(0.15,()->{
+                    robot.elevadores(1,1500);
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(0.5,()->{
+                    robot.hombritoAuto(1,400);
+                    robot.brazoauto(1,700);
+                })
+
+                .lineToConstantHeading(new Vector2d(-25,11),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL * 0.5) // aceleracion
+                )
+                .lineToConstantHeading(new Vector2d(-25,4))
+
+                .UNSTABLE_addTemporalMarkerOffset(1,()->{
+                   robot.garra1(0.2);
+                   robot.garra2(0.4);
+                })
+
+                .waitSeconds(1.5)
+                .UNSTABLE_addTemporalMarkerOffset(0,()->{
+                    robot.hombritoAuto(1,0);
+                    robot.elevadores(1,630);
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(0.1,()->{
+                    robot.brazoauto(1,0);
+                })
+
+                .lineToConstantHeading(new Vector2d(-61,11))
+
+                .UNSTABLE_addTemporalMarkerOffset(0,()->{
+                    robot.garra1(0.6);
+                    robot.garra2(0);
+                })
+
+                .lineToConstantHeading(new Vector2d(-25,11),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL * 0.5) // aceleracion
+                )
+                .lineToConstantHeading(new Vector2d(-25,4))
+
+                .UNSTABLE_addTemporalMarkerOffset(0.15,()->{
+                    robot.elevadores(1,1500);
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(0.5,()->{
+                    robot.hombritoAuto(1,400);
+                    robot.brazoauto(1,700);
+                })
+
+                .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
+                    robot.garra1(0.2);
+                    robot.garra2(0.4);
+                })
+
+                .waitSeconds(0.5);
+
+
 
         // pepe estuvo aqui
         // aqui tambien
@@ -150,11 +234,11 @@ public class autonomo extends LinearOpMode {
         TrajectorySequenceBuilder sequence2 = robot.drive.trajectorySequenceBuilder(posicionInicial)
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () ->{
                     robot.brazoauto(1,550);
-                    robot.elevadorAuto(1,-3500);
+                    robot.elevadores(1,-3500);
                     robot.hombritoAuto(1,-300);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(3, ()->{
-                   robot.elevadorAuto(1, -2500);
+                   robot.elevadores(1, -2500);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(4, () ->{
                     robot.garra1(0);
@@ -163,7 +247,7 @@ public class autonomo extends LinearOpMode {
                 .lineTo(new Vector2d(-34.5, -5))
                 .waitSeconds(3)
                 .UNSTABLE_addTemporalMarkerOffset(0, () ->{
-                    robot.elevadorAuto(1,0);
+                    robot.elevadores(1,0);
                     System.out.println("que ooonda santiago");
                 })
                 .UNSTABLE_addTemporalMarkerOffset(1, () ->{
@@ -189,7 +273,7 @@ public class autonomo extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-59,10))
 
                 .UNSTABLE_addTemporalMarkerOffset(2,() ->{
-                    robot.elevadorAuto(1,-3500);
+                    robot.elevadores(1,-3500);
                 })
 
                 .waitSeconds(3)

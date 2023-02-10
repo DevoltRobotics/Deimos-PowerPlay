@@ -5,13 +5,11 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.OpenCV.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
-import org.opencv.core.Mat;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -26,7 +24,6 @@ public class queonda extends LinearOpMode {
 
 
 
-    static final double FEET_PER_METER = 3.28084;
 
     double fx = 578.272;
     double fy = 578.272;
@@ -104,11 +101,11 @@ public class queonda extends LinearOpMode {
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () ->{
                     robot.brazoauto(1,550);
-                    robot.elevadorAuto(1,-3500);
+                    robot.elevadores(1,-3500);
                     robot.hombritoAuto(1,300);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(2.5, ()->{
-                    robot.elevadorAuto(1, -2500);
+                    robot.elevadores(1, -2500);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(3, () ->{
                     robot.garra1(0);
@@ -117,7 +114,7 @@ public class queonda extends LinearOpMode {
                 .lineTo(new Vector2d(36.4, -3.95))
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(1, () ->{
-                    robot.elevadorAuto(1,0);
+                    robot.elevadores(1,0);
                     System.out.println("que ooonda santiago");
                 })
                 .UNSTABLE_addTemporalMarkerOffset(2, () ->{
@@ -147,11 +144,11 @@ public class queonda extends LinearOpMode {
         TrajectorySequenceBuilder sequence2 = robot.drive.trajectorySequenceBuilder(posicionInicial)
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () ->{
                     robot.brazoauto(1,550);
-                    robot.elevadorAuto(1,-3500);
+                    robot.elevadores(1,-3500);
                     robot.hombritoAuto(1,300);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(2, ()->{
-                    robot.elevadorAuto(1, -2500);
+                    robot.elevadores(1, -2500);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(3, () ->{
                     robot.garra1(0);
@@ -160,7 +157,7 @@ public class queonda extends LinearOpMode {
                 .lineTo(new Vector2d(36, -5))
                 .waitSeconds(1)
                 .UNSTABLE_addTemporalMarkerOffset(1, () ->{
-                    robot.elevadorAuto(1,0);
+                    robot.elevadores(1,0);
                     System.out.println("que ooonda santiago");
                 })
                 .UNSTABLE_addTemporalMarkerOffset(2, () ->{
@@ -187,7 +184,7 @@ public class queonda extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(59,10))
 
                 .UNSTABLE_addTemporalMarkerOffset(2,() ->{
-                    robot.elevadorAuto(1,-3500);
+                    robot.elevadores(1,-3500);
                 })
 
 
@@ -204,7 +201,7 @@ public class queonda extends LinearOpMode {
                     robot.garra2(1);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0, () ->{
-                    robot.elevadorAuto(1,0);
+                    robot.elevadores(1,0);
                     System.out.println("que ooonda santiago");
                 })
                 .UNSTABLE_addTemporalMarkerOffset(1, () ->{

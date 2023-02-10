@@ -25,7 +25,7 @@ public class regresate_a_tu_lugar extends LinearOpMode {
         Pose2d posicionInicial = new Pose2d(-10,15, Math.toRadians(270));
 
         TrajectorySequenceBuilder sequenceBuilder = robot.drive.trajectorySequenceBuilder(posicionInicial)
-                .lineTo(new Vector2d(-34, 1))
+                .lineTo(new Vector2d(-34, 1)) // TODO: QUE ONDA
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(-49, 12.4), Math.toRadians(0.0))
                 .lineTo(new Vector2d(-56, 12.4));
@@ -45,7 +45,7 @@ public class regresate_a_tu_lugar extends LinearOpMode {
 
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () ->{
                     robot.brazito(0.7);
-                    robot.elevadorAuto(1,-2900);
+                    robot.elevadores(1,-2900);
                     robot.hombrito(-0.5);
                 })
 

@@ -1,34 +1,38 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp (name = "TeleOp", group = "teleops")
 public class teleop extends OpMode {
 
     Robot robot = new Robot();
 
-    boolean freno = false;
     boolean hombrolnto = false;
     boolean brazolnto = false;
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot.init(hardwareMap);
+        robot.garra1(0);
+        robot.garra2(0.6);
     }
 
     boolean yAnterior = false;
     boolean xAnterior = false;
 
     boolean hombroAutomatico = false;
+
+    boolean elevAutomatico = false;
+    double elevTarget = 0;
 
     @Override
     public void loop() {
@@ -48,18 +52,14 @@ public class teleop extends OpMode {
         telemetry.addData("corriente del hombro", robot.hombro.getCurrent(CurrentUnit.MILLIAMPS));
         //   telemetry.addData("velocidad del hombro", robot.hombro.getCurrent(Velocity));
         telemetry.addData("hombro", robot.hombro.getCurrentPosition());
+
         telemetry.addData("elev 1", robot.elev.getCurrentPosition());
+        telemetry.addData("elev target", robot.rielesController.getTargetPosition());
         telemetry.addData("elev 2", robot.elev2.getCurrentPosition());
+
         telemetry.addData("brazo",robot.brazo.getCurrentPosition());
         telemetry.addData("hombro", robot.hombro.getCurrentPosition());
 
-
-
-        if (gamepad2.options){
-            freno = true;
-        }else {
-            freno = false;
-        }
 
         if (gamepad2.right_bumper){
             hombrolnto = true;
@@ -72,6 +72,7 @@ public class teleop extends OpMode {
         }else {
             brazolnto = false;
         }
+
 
 
 
@@ -99,9 +100,9 @@ public class teleop extends OpMode {
 
 
             if (hombrolnto) {
-                robot.hombro.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.3);
+                robot.hombro.setPower((gamepad2.left_trigger - gamepad2.right_trigger) * 0.3);
             } else {
-                robot.hombro.setPower((gamepad2.right_trigger - gamepad2.left_trigger) * 0.7);
+                robot.hombro.setPower((gamepad2.left_trigger - gamepad2.right_trigger) * 0.7);
             }
         }
        /*    if (gamepad2.dpad_right){
@@ -110,27 +111,28 @@ public class teleop extends OpMode {
                robot.garra1(robot.garra1.getPosition() - 0.1);
            }*/
 
-       if (gamepad2.b) {
-            robot.garra1(0.5);
-        } else if (gamepad2.a) {
-           robot.garra1(1);
+       if (gamepad2.a) {
+           robot.garra1(0.6);
+           robot.garra2(0);
+        } else if (gamepad2.b) {
+           robot.garra1(0.2);
+           robot.garra2(0.4);
        }
 
 
-       /* if (gamepad2.dpad_up){
-            robot.elevadorAuto(1,-2900);
-        }else if (gamepad2.dpad_down){
-            robot.elevadorAuto(1,-2000);*/
-
-
-
-        if (freno){
-            robot.elevador(0.1);
+       if(Math.abs(gamepad2.left_stick_y) > 0.4) {
+           elevTarget -= gamepad2.left_stick_y * 60;
         } else {
-
-            robot.elevador(gamepad2.left_stick_y);
+            if(gamepad2.dpad_up) {
+                elevTarget = 1500;
+            }else if (gamepad2.dpad_down){
+                elevTarget = 0;
+            }
         }
 
+       elevTarget = Range.clip(elevTarget, 0, 1500);
+
+        robot.elevadores(1, (int) elevTarget);
 
         robot.drive.update();
 

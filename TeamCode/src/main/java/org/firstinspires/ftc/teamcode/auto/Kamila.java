@@ -24,8 +24,6 @@ import java.util.ArrayList;
 @Autonomous (name = "ezquina azules solo se estaciona")
 public class Kamila extends LinearOpMode {
 
-    static final double FEET_PER_METER = 3.28084;
-
     double fx = 578.272;
     double fy = 578.272;
     double cx = 402.145;
