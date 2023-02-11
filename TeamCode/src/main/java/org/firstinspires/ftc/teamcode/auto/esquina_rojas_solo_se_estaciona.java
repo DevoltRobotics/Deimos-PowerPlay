@@ -21,8 +21,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 
-@Autonomous (name = "ezquina azules solo se estaciona")
-public class Kamila extends LinearOpMode {
+@Autonomous (name = "esquina rojas solo se estaciona")
+public class esquina_rojas_solo_se_estaciona extends LinearOpMode {
+
+    static final double FEET_PER_METER = 3.28084;
 
     double fx = 578.272;
     double fy = 578.272;
@@ -72,23 +74,22 @@ public class Kamila extends LinearOpMode {
 
         Robot robot = new Robot();
         robot.init(hardwareMap);
-        robot.garra2(0);
-        robot.garra1(1);
 
 
 
-        Pose2d posicionInicial = new Pose2d(-36, 60, Math.toRadians(270));
+
+        Pose2d posicionInicial = new Pose2d(36, 60, Math.toRadians(270));
 
         TrajectorySequenceBuilder sequenceee = robot.drive.trajectorySequenceBuilder(posicionInicial)
                 .waitSeconds(20);
         if(position == 2){
-            sequenceee.lineToConstantHeading(new Vector2d(-36,30));
+            sequenceee.lineToConstantHeading(new Vector2d(36,30));
         }else if (position == 1){
-            sequenceee.lineToConstantHeading(new Vector2d(-10,60));
-            sequenceee.lineToConstantHeading(new Vector2d(-10,30));
+            sequenceee.lineToConstantHeading(new Vector2d(10,60));
+            sequenceee.lineToConstantHeading(new Vector2d(10,30));
         }else if (position == 3){
-            sequenceee.lineToConstantHeading(new Vector2d(-60,60));
-            sequenceee.lineToConstantHeading(new Vector2d(-60,30));
+            sequenceee.lineToConstantHeading(new Vector2d(60,60));
+            sequenceee.lineToConstantHeading(new Vector2d(60,30));
         }
 
         waitForStart();

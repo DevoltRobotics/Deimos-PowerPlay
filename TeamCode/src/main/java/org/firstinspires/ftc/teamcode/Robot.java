@@ -59,6 +59,7 @@ public class Robot {
 
        elev.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
        elev2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
        elev.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
        elev2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -99,7 +100,7 @@ public class Robot {
        elev.setMode(DcMotor.RunMode.RUN_TO_POSITION);
        elev.setPower(power);
 
-        elev2.setTargetPosition(ticks);
+        elev2.setTargetPosition(-ticks);
         elev2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elev2.setPower(power);
     }

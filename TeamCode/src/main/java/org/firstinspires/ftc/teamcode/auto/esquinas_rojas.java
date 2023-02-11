@@ -19,10 +19,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.ArrayList;
 
 
-@Autonomous(name = "ezquinas rojas")
-public class queonda extends LinearOpMode {
-
-
+@Autonomous(name = "esquinas rojas")
+public class esquinas_rojas extends LinearOpMode {
 
 
     double fx = 578.272;

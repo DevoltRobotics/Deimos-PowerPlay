@@ -112,7 +112,7 @@ public class teleop extends OpMode {
            }*/
 
        if (gamepad2.a) {
-           robot.garra1(0.6);
+           robot.garra1(0.5);
            robot.garra2(0);
         } else if (gamepad2.b) {
            robot.garra1(0.2);
