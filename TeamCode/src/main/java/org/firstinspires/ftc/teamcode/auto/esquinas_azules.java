@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 @Autonomous(name = "esquinas azules")
 public class esquinas_azules extends LinearOpMode {
 
+
     double fx = 578.272;
     double fy = 578.272;
     double cx = 402.145;
@@ -50,6 +52,7 @@ public class esquinas_azules extends LinearOpMode {
             public void onOpened() {
 
                 camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(camera,30);
             }
 
             @Override
@@ -73,16 +76,13 @@ public class esquinas_azules extends LinearOpMode {
 
         Robot robot = new Robot();
         robot.init(hardwareMap);
+        robot.garra2(0);
+        robot.garra1(0.5);
 
         Pose2d posicionInicial = new Pose2d(-36, 60, Math.toRadians(270));
 
         TrajectorySequenceBuilder sequenceee = robot.drive.trajectorySequenceBuilder(posicionInicial)
-                .UNSTABLE_addTemporalMarkerOffset(0.8, () -> {
-                    robot.garra2(0);
-                    robot.garra1(0.5);
-                })
 
-                .waitSeconds(1)
 
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {
                     robot.brazoauto(1, 700);
@@ -92,12 +92,6 @@ public class esquinas_azules extends LinearOpMode {
                     robot.elevadores(1, 1500);
 
                 })
-                /*.UNSTABLE_addTemporalMarkerOffset(2.5, ()->{
-                    robot.elevadorAuto(1, -2500);
-                })*/
-                /* .UNSTABLE_addTemporalMarkerOffset(1.5, ()->{
-                     robot.brazoauto(1,970);
-                 })*/
 
                 .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     robot.garra1(0.2);
@@ -136,7 +130,6 @@ public class esquinas_azules extends LinearOpMode {
 
                     .lineToConstantHeading(new Vector2d(-61.3, 10)) // TODO: Posicion para agarrar
 
-                    // .splineToLinearHeading(new Pose2d(-40,11, Math.toRadians(180)), Math.toRadians(0))
 
                     .UNSTABLE_addTemporalMarkerOffset(0.15, () -> {
                         robot.elevadores(1, 1500);
@@ -153,7 +146,7 @@ public class esquinas_azules extends LinearOpMode {
                     )
                     .lineToConstantHeading(new Vector2d(-24.7, 6.15)) // acercarse
 
-                    .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                    .UNSTABLE_addTemporalMarkerOffset(0.4, () -> {
                         robot.garra1(0.2);
                         robot.garra2(0.4);
                     })
@@ -172,13 +165,9 @@ public class esquinas_azules extends LinearOpMode {
         if (position == 2) {
             parkSequenceBuildetr.lineToConstantHeading(new Vector2d(-35, 8.8));
         } else if (position == 1) {
-            parkSequenceBuildetr.lineToConstantHeading(new Vector2d(-36, 12)); //izq,der/front,back primer cono
             parkSequenceBuildetr.lineToConstantHeading(new Vector2d(-10, 9.1));
-            parkSequenceBuildetr.lineToConstantHeading(new Vector2d(-10, 32));
         } else if (position == 3) {
-            parkSequenceBuildetr.lineToConstantHeading(new Vector2d(-36, 7.1));
             parkSequenceBuildetr.lineToConstantHeading(new Vector2d(-60, 7.1));
-            parkSequenceBuildetr.lineToConstantHeading(new Vector2d(-60, 30));
         }
 
         TrajectorySequence parkSequence = parkSequenceBuildetr.build();

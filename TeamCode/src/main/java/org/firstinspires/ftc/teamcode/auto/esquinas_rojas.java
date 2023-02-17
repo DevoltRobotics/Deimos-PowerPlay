@@ -73,32 +73,21 @@ public class esquinas_rojas extends LinearOpMode {
         Robot robot = new Robot();
         robot.init(hardwareMap);
         robot.garra2(0);
-        robot.garra1(0.6);
+        robot.garra1(0.5);
 
         Pose2d posicionInicial = new Pose2d(36, 60, Math.toRadians(270));
 
         TrajectorySequenceBuilder sequenceee = robot.drive.trajectorySequenceBuilder(posicionInicial)
-                .UNSTABLE_addTemporalMarkerOffset(0.8, () -> {
-                    robot.garra2(0);
-                    robot.garra1(0.5);
-                })
 
-                .waitSeconds(1)
 
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {
-                    robot.brazoauto(1, 700);
+                    robot.brazoauto(1, -700);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    robot.hombritoAuto(1, -400);
+                    robot.hombritoAuto(1, 400);
                     robot.elevadores(1, 1500);
 
                 })
-                /*.UNSTABLE_addTemporalMarkerOffset(2.5, ()->{
-                    robot.elevadorAuto(1, -2500);
-                })*/
-                /* .UNSTABLE_addTemporalMarkerOffset(1.5, ()->{
-                     robot.brazoauto(1,970);
-                 })*/
 
                 .UNSTABLE_addTemporalMarkerOffset(2, () -> {
                     robot.garra1(0.2);
@@ -112,9 +101,9 @@ public class esquinas_rojas extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(36, 9, Math.toRadians(0)), 0);
 
         int ciclos = 2;
-        int[] elevadorPosition = { 800 };
+        int[] elevadorPosition = {800};
 
-        for(int i = 1 ; i <= ciclos ; i++) {
+        for (int i = 1; i <= ciclos; i++) {
             sequenceee
                     .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
 
@@ -124,37 +113,36 @@ public class esquinas_rojas extends LinearOpMode {
                         System.out.println("que ooonda saray");
                     })
 
-                    .UNSTABLE_addTemporalMarkerOffset(0.15,()->{
+                    .UNSTABLE_addTemporalMarkerOffset(0.15, () -> {
                         robot.brazoauto(1, 0);
                         System.out.println("que ooonda abby");
                         robot.elevadores(1, elevadorPosition[0]);
                     })
 
-                    .UNSTABLE_addTemporalMarkerOffset(1.15,() ->{
+                    .UNSTABLE_addTemporalMarkerOffset(1.15, () -> {
                         robot.garra1(0.5);
                         robot.garra2(0);
                     })
 
-                    .lineToConstantHeading(new Vector2d(61.3,10)) // TODO: Posicion para agarrar
+                    .lineToConstantHeading(new Vector2d(61.3, 10)) // TODO: Posicion para agarrar
 
-                    // .splineToLinearHeading(new Pose2d(-40,11, Math.toRadians(180)), Math.toRadians(0))
 
-                    .UNSTABLE_addTemporalMarkerOffset(0.15,()->{
-                        robot.elevadores(1,1500);
+                    .UNSTABLE_addTemporalMarkerOffset(0.15, () -> {
+                        robot.elevadores(1, 1500);
                     })
 
-                    .UNSTABLE_addTemporalMarkerOffset(0.5,()->{
-                        robot.hombritoAuto(1,-400);
-                        robot.brazoauto(1,700);
+                    .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                        robot.hombritoAuto(1, -400);
+                        robot.brazoauto(1, 700);
                     })
 
-                    .lineToConstantHeading(new Vector2d(24.7,10), // TODO: Posicion para poner
+                    .lineToConstantHeading(new Vector2d(24.7, 10), // TODO: Posicion para poner
                             SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL * 0.5) // aceleracion
                     )
-                    .lineToConstantHeading(new Vector2d(24.7,6.15)) // acercarse
+                    .lineToConstantHeading(new Vector2d(24.7, 6.15)) // acercarse
 
-                    .UNSTABLE_addTemporalMarkerOffset(0.5,()->{
+                    .UNSTABLE_addTemporalMarkerOffset(0.4, () -> {
                         robot.garra1(0.2);
                         robot.garra2(0.4);
                     })
@@ -164,25 +152,24 @@ public class esquinas_rojas extends LinearOpMode {
             elevadorPosition[0] -= 80;
         }
 
+        TrajectorySequence autonomoPrePark = sequenceee.build();
 
         waitForStart();
 
-
+        TrajectorySequenceBuilder parkSequenceBuildetr = robot.drive.trajectorySequenceBuilder(autonomoPrePark.end());
 
         if (position == 2) {
-            sequenceee.lineToConstantHeading(new Vector2d(35, 8.8));
+            parkSequenceBuildetr.lineToConstantHeading(new Vector2d(35, 8.8));
         } else if (position == 1) {
-            sequenceee.lineToConstantHeading(new Vector2d(36, 12)); //izq,der/front,back primer cono
-            sequenceee.lineToConstantHeading(new Vector2d(10, 9.1));
-            sequenceee.lineToConstantHeading(new Vector2d(10, 32));
+            parkSequenceBuildetr.lineToConstantHeading(new Vector2d(10, 8.8));
         } else if (position == 3) {
-            sequenceee.lineToConstantHeading(new Vector2d(36, 7.1));
-            sequenceee.lineToConstantHeading(new Vector2d(60, 7.1));
-            sequenceee.lineToConstantHeading(new Vector2d(60, 30));
+            parkSequenceBuildetr.lineToConstantHeading(new Vector2d(60, 8.8));
         }
 
+        TrajectorySequence parkSequence = parkSequenceBuildetr.build();
 
         robot.drive.setPoseEstimate(posicionInicial);
-        robot.drive.followTrajectorySequence(sequenceee.build());
+        robot.drive.followTrajectorySequence(autonomoPrePark);
+        robot.drive.followTrajectorySequence(parkSequence);
     }
 }
